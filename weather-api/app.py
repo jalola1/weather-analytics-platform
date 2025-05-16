@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__) #initialize Flask app
+API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 @app.route("/") #route for home page
 def home():
@@ -8,16 +14,24 @@ def home():
 
 @app.route("/weather") #route for weather data
 def get_weather():
-    #Return mock weather data
-    return jsonify({
-        "location": "New York",
-        "temperature": 70,
-        "conditions": "Sunny"
-    })
+    city = request.args.get("city", "New York")
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+    
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        return jsonify({
+            "city": data["name"],
+            "temperature": data["main"]["temp"],
+            "conditions": data["weather"][0]["description"]
+        })
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__": 
-    print("Available routes: ")
-    print(app.url_map)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
 
 
