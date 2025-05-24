@@ -4,7 +4,6 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-
 app = Flask(__name__) #initialize Flask app
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
@@ -33,5 +32,3 @@ def get_weather():
 
 if __name__ == "__main__": 
     app.run(debug=True)
-
-
