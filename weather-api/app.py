@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import os
 from dotenv import load_dotenv
+from mangum import mangum
 
 load_dotenv()
 app = Flask(__name__) #initialize Flask app
@@ -32,3 +33,5 @@ def get_weather():
 
 if __name__ == "__main__": 
     app.run(debug=True)
+
+handler = mangum(app) # AWS Lambda handler
